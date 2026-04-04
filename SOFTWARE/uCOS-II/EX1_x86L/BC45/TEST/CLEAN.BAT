@@ -1,0 +1,6 @@
+CD ..\OBJ
+DEL *.*
+CD ..\WORK
+DEL *.*
+CD ..\TEST
+DEL OUTPUT.TXT
