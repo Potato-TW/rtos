@@ -2,7 +2,7 @@
 
 backup_name="mineBackup"
 
-common_dir="/mnt/c/Users/bhg08/Desktop/rtos/bc_source/bc and source/SOFTWARE/uCOS-II"
+common_dir="/mnt/c/Users/bhg08/Desktop/rtos/bc_and_source/SOFTWARE/uCOS-II"
 bc_source="$common_dir/SOURCE"
 lab1_dir_source="$common_dir/EX1_x86L/BC45/SOURCE"
 

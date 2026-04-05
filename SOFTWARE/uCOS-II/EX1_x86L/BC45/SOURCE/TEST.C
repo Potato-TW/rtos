@@ -19,7 +19,7 @@
 */
 
 #define TASK_STK_SIZE 512 /* Size of each task's stacks (# of WORDs)            */
-#define N_TASKS 3         /* Number of identical tasks                          */
+#define N_TASKS 10        /* Number of identical tasks                          */
 
 /*
 *********************************************************************************************************
@@ -38,15 +38,18 @@ OS_EVENT *RandomSem;
 *********************************************************************************************************
 */
 
-void Task1(void *data);     /* Function prototypes of tasks                  */
-void Task2(void *data);     /* Function prototypes of tasks                  */
-void Task3(void *data);     /* Function prototypes of tasks                  */
+// void Task(void *data);      /* Function prototypes of tasks                  */
 void TaskStart(void *data); /* Function prototypes of Startup task           */
 static void TaskStartCreateTasks(void);
-static void TaskStartDispInit(void);
-static void TaskStartDisp(void);
+// static void TaskStartDispInit(void);
+// static void TaskStartDisp(void);
 
-void printMsgBuf();
+void Task(int taskId_, int compTime_, int period_, BOOLEAN printList);
+void Task1(void *pdata);
+void Task2(void *pdata);
+void Task3(void *pdata);
+void PrintMsgList();
+void InitMsgList();
 
 /*$PAGE*/
 /*
@@ -57,17 +60,22 @@ void printMsgBuf();
 
 void main(void)
 {
-    PC_DispClrScr(DISP_FGND_WHITE + DISP_BGND_BLACK); /* Clear the screen                         */
+  // PC_DispClrScr(DISP_FGND_WHITE + DISP_BGND_BLACK); /* Clear the screen                         */
 
-    OSInit(); /* Initialize uC/OS-II                      */
+  OSInit(); /* Initialize uC/OS-II                      */
 
-    PC_DOSSaveReturn();        /* Save environment to return to DOS        */
-    PC_VectSet(uCOS, OSCtxSw); /* Install uC/OS-II's context switch vector */
+  PC_DOSSaveReturn();        /* Save environment to return to DOS        */
+  PC_VectSet(uCOS, OSCtxSw); /* Install uC/OS-II's context switch vector */
 
-    RandomSem = OSSemCreate(1); /* Random number semaphore                  */
+  RandomSem = OSSemCreate(1); /* Random number semaphore                  */
 
-    OSTaskCreate(TaskStart, (void *)0, &TaskStartStk[TASK_STK_SIZE - 1], 0);
-    OSStart(); /* Start multitasking                       */
+  // TaskStart((void *)0);
+
+  OSTaskCreate(TaskStart, (void *)0, &TaskStartStk[TASK_STK_SIZE - 1], 0);
+
+  InitMsgList();
+
+  OSStart(); /* Start multitasking                       */
 }
 
 /*
@@ -78,39 +86,41 @@ void main(void)
 void TaskStart(void *pdata)
 {
 #if OS_CRITICAL_METHOD == 3 /* Allocate storage for CPU status register */
-    OS_CPU_SR cpu_sr;
+  OS_CPU_SR cpu_sr;
 #endif
-    char s[100];
-    INT16S key;
+  char s[100];
+  INT16S key;
 
-    pdata = pdata; /* Prevent compiler warning                 */
+  pdata = pdata; /* Prevent compiler warning                 */
 
-    TaskStartDispInit(); /* Initialize the display                   */
+  // TaskStartDispInit(); /* Initialize the display                   */
 
-    OS_ENTER_CRITICAL();
-    PC_VectSet(0x08, OSTickISR);      /* Install uC/OS-II's clock tick ISR        */
-    PC_SetTickRate(OS_TICKS_PER_SEC); /* Reprogram tick rate                      */
-    OS_EXIT_CRITICAL();
+  OS_ENTER_CRITICAL();
+  PC_VectSet(0x08, OSTickISR);      /* Install uC/OS-II's clock tick ISR        */
+  PC_SetTickRate(OS_TICKS_PER_SEC); /* Reprogram tick rate                      */
+  OS_EXIT_CRITICAL();
 
-    OSStatInit(); /* Initialize uC/OS-II's statistics         */
+  // OSStatInit(); /* Initialize uC/OS-II's statistics         */
 
-    TaskStartCreateTasks(); /* Create all the application tasks         */
+  TaskStartCreateTasks(); /* Create all the application tasks         */
 
-    for (;;)
-    {
-        TaskStartDisp(); /* Update the display                       */
+  for (;;)
+  {
+    // TaskStartDisp(); /* Update the display                       */
 
-        if (PC_GetKey(&key) == TRUE)
-        { /* See if key has been pressed              */
-            if (key == 0x1B)
-            {                   /* Yes, see if it's the ESCAPE key          */
-                PC_DOSReturn(); /* Return to DOS                            */
-            }
-        }
-
-        OSCtxSwCtr = 0;            /* Clear context switch counter             */
-        OSTimeDlyHMSM(0, 0, 1, 0); /* Wait one second                          */
+    if (PC_GetKey(&key) == TRUE)
+    { /* See if key has been pressed              */
+      if (key == 0x1B)
+      {                 /* Yes, see if it's the ESCAPE key          */
+        PC_DOSReturn(); /* Return to DOS                            */
+      }
     }
+
+    OSCtxSwCtr = 0; /* Clear context switch counter             */
+
+    OSTimeSet(0);
+    OSTimeDlyHMSM(0, 0, 1, 0); /* Wait five minutes                          */
+  }
 }
 
 /*$PAGE*/
@@ -120,38 +130,38 @@ void TaskStart(void *pdata)
 *********************************************************************************************************
 */
 
-static void TaskStartDispInit(void)
-{
-    /*                                1111111111222222222233333333334444444444555555555566666666667777777777 */
-    /*                      01234567890123456789012345678901234567890123456789012345678901234567890123456789 */
-    PC_DispStr(0, 0, "                         uC/OS-II, The Real-Time Kernel                         ", DISP_FGND_WHITE + DISP_BGND_RED + DISP_BLINK);
-    PC_DispStr(0, 1, "                                Jean J. Labrosse                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 2, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 3, "                                    EXAMPLE #1                                  ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 4, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 5, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 6, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 7, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 8, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 9, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 10, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 11, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 12, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 13, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 14, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 15, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 16, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 17, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 18, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 19, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 20, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 21, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 22, "#Tasks          :        CPU Usage:     %                                       ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 23, "#Task switch/sec:                                                               ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-    PC_DispStr(0, 24, "                            <-PRESS 'ESC' TO QUIT->                             ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY + DISP_BLINK);
-    /*                                1111111111222222222233333333334444444444555555555566666666667777777777 */
-    /*                      01234567890123456789012345678901234567890123456789012345678901234567890123456789 */
-}
+// static void TaskStartDispInit(void)
+// {
+//   /*                                1111111111222222222233333333334444444444555555555566666666667777777777 */
+//   /*                      01234567890123456789012345678901234567890123456789012345678901234567890123456789 */
+//   PC_DispStr(0, 0, "                         uC/OS-II, The Real-Time Kernel                         ", DISP_FGND_WHITE + DISP_BGND_RED + DISP_BLINK);
+//   PC_DispStr(0, 1, "                                Jean J. Labrosse                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 2, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 3, "                                    EXAMPLE #1                                  ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 4, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 5, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 6, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 7, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 8, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 9, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 10, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 11, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 12, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 13, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 14, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 15, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 16, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 17, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 18, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 19, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 20, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 21, "                                                                                ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 22, "#Tasks          :        CPU Usage:     %                                       ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 23, "#Task switch/sec:                                                               ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//   PC_DispStr(0, 24, "                            <-PRESS 'ESC' TO QUIT->                             ", DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY + DISP_BLINK);
+//   /*                                1111111111222222222233333333334444444444555555555566666666667777777777 */
+//   /*                      01234567890123456789012345678901234567890123456789012345678901234567890123456789 */
+// }
 
 /*$PAGE*/
 /*
@@ -160,43 +170,43 @@ static void TaskStartDispInit(void)
 *********************************************************************************************************
 */
 
-static void TaskStartDisp(void)
-{
-    char s[80];
-
-    sprintf(s, "%5d", OSTaskCtr); /* Display #tasks running               */
-    PC_DispStr(18, 22, s, DISP_FGND_YELLOW + DISP_BGND_BLUE);
-
-#if OS_TASK_STAT_EN > 0
-    sprintf(s, "%3d", OSCPUUsage); /* Display CPU usage in %               */
-    PC_DispStr(36, 22, s, DISP_FGND_YELLOW + DISP_BGND_BLUE);
-#endif
-
-    sprintf(s, "%5d", OSCtxSwCtr); /* Display #context switches per second */
-    PC_DispStr(18, 23, s, DISP_FGND_YELLOW + DISP_BGND_BLUE);
-
-    sprintf(s, "V%1d.%02d", OSVersion() / 100, OSVersion() % 100); /* Display uC/OS-II's version number    */
-    PC_DispStr(75, 24, s, DISP_FGND_YELLOW + DISP_BGND_BLUE);
-
-    switch (_8087)
-    { /* Display whether FPU present          */
-    case 0:
-        PC_DispStr(71, 22, " NO  FPU ", DISP_FGND_YELLOW + DISP_BGND_BLUE);
-        break;
-
-    case 1:
-        PC_DispStr(71, 22, " 8087 FPU", DISP_FGND_YELLOW + DISP_BGND_BLUE);
-        break;
-
-    case 2:
-        PC_DispStr(71, 22, "80287 FPU", DISP_FGND_YELLOW + DISP_BGND_BLUE);
-        break;
-
-    case 3:
-        PC_DispStr(71, 22, "80387 FPU", DISP_FGND_YELLOW + DISP_BGND_BLUE);
-        break;
-    }
-}
+// static void TaskStartDisp(void)
+// {
+//   char s[80];
+//
+//   sprintf(s, "%5d", OSTaskCtr); /* Display #tasks running               */
+//   PC_DispStr(18, 22, s, DISP_FGND_YELLOW + DISP_BGND_BLUE);
+//
+// #if OS_TASK_STAT_EN > 0
+//   sprintf(s, "%3d", OSCPUUsage); /* Display CPU usage in %               */
+//   PC_DispStr(36, 22, s, DISP_FGND_YELLOW + DISP_BGND_BLUE);
+// #endif
+//
+//   sprintf(s, "%5d", OSCtxSwCtr); /* Display #context switches per second */
+//   PC_DispStr(18, 23, s, DISP_FGND_YELLOW + DISP_BGND_BLUE);
+//
+//   sprintf(s, "V%1d.%02d", OSVersion() / 100, OSVersion() % 100); /* Display uC/OS-II's version number    */
+//   PC_DispStr(75, 24, s, DISP_FGND_YELLOW + DISP_BGND_BLUE);
+//
+//   switch (_8087)
+//   { /* Display whether FPU present          */
+//   case 0:
+//     PC_DispStr(71, 22, " NO  FPU ", DISP_FGND_YELLOW + DISP_BGND_BLUE);
+//     break;
+//
+//   case 1:
+//     PC_DispStr(71, 22, " 8087 FPU", DISP_FGND_YELLOW + DISP_BGND_BLUE);
+//     break;
+//
+//   case 2:
+//     PC_DispStr(71, 22, "80287 FPU", DISP_FGND_YELLOW + DISP_BGND_BLUE);
+//     break;
+//
+//   case 3:
+//     PC_DispStr(71, 22, "80387 FPU", DISP_FGND_YELLOW + DISP_BGND_BLUE);
+//     break;
+//   }
+// }
 
 /*$PAGE*/
 /*
@@ -207,16 +217,16 @@ static void TaskStartDisp(void)
 
 static void TaskStartCreateTasks(void)
 {
-    // INT8U i;
+  INT8U i;
 
-    // for (i = 0; i < N_TASKS; i++)
-    // {                          /* Create N_TASKS identical tasks           */
-    // TaskData[i] = '0' + i; /* Each task will display its own letter    */
-    // OSTaskCreate(Task1, (void *)&TaskData[i], &TaskStk[i][TASK_STK_SIZE - 1], i + 1);
-    // }
-    OSTaskCreate(Task1, (void *)0, &TaskStk[0][TASK_STK_SIZE - 1], 1);
-    OSTaskCreate(Task2, (void *)0, &TaskStk[1][TASK_STK_SIZE - 1], 2);
-    OSTaskCreate(Task3, (void *)0, &TaskStk[2][TASK_STK_SIZE - 1], 3);
+  // for (i = 0; i < N_TASKS; i++) {                        /* Create N_TASKS identical tasks           */
+  //     TaskData[i] = '0' + i;                             /* Each task will display its own letter    */
+  //     OSTaskCreate(Task, (void *)&TaskData[i], &TaskStk[i][TASK_STK_SIZE - 1], i + 1);
+  // }
+
+  OSTaskCreate(Task1, 0, &TaskStk[0][TASK_STK_SIZE - 1], 1);
+  OSTaskCreate(Task2, 0, &TaskStk[1][TASK_STK_SIZE - 1], 2);
+  OSTaskCreate(Task3, 0, &TaskStk[2][TASK_STK_SIZE - 1], 3);
 }
 
 /*
@@ -225,173 +235,113 @@ static void TaskStartCreateTasks(void)
 *********************************************************************************************************
 */
 
-void Task(void *pdata)
+// void Task(void *pdata)
+// {
+//   INT8U x;
+//   INT8U y;
+//   INT8U err;
+
+//   for (;;)
+//   {
+//     OSSemPend(RandomSem, 0, &err); /* Acquire semaphore to perform random numbers        */
+//     x = random(80);                /* Find X position where task number will appear      */
+//     y = random(16);                /* Find Y position where task number will appear      */
+//     OSSemPost(RandomSem);          /* Release semaphore                                  */
+//                                    /* Display the task number on the screen              */
+//     PC_DispChar(x, y + 5, *(char *)pdata, DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
+//     OSTimeDly(1); /* Delay 1 clock tick                                 */
+//   }
+// }
+
+void Task(int taskId_, int compTime_, int period_, BOOLEAN printList)
 {
-    INT8U x;
-    INT8U y;
-    INT8U err;
+  int start, end, toDelay, deadline;
+  OS_ENTER_CRITICAL();
+  OSTCBCur->compTime = compTime_;
+  OSTCBCur->period = period_;
+  OS_EXIT_CRITICAL();
+  deadline = period_;
 
-    for (;;)
-    {
-        OSSemPend(RandomSem, 0, &err); /* Acquire semaphore to perform random numbers        */
-        x = random(80);                /* Find X position where task number will appear      */
-        y = random(16);                /* Find Y position where task number will appear      */
-        OSSemPost(RandomSem);          /* Release semaphore                                  */
-                                       /* Display the task number on the screen              */
-        PC_DispChar(x, y + 5, *(char *)pdata, DISP_FGND_BLACK + DISP_BGND_LIGHT_GRAY);
-        OSTimeDly(1); /* Delay 1 clock tick                                 */
+  for (;;)
+  {
+    // 取得開始時間
+    start = OSTimeGet();
+    // 等待task執行結束
+    while (OSTCBCur->compTime > 0)
+      ; // Busywaiting
+
+    OS_ENTER_CRITICAL();
+    // 取得結束時間
+    end = OSTimeGet();
+    // 計算完成時間與期望時間的差 -> 期望花的時間:period, 實際花的時間:end-start
+    toDelay = OSTCBCur->period - (end - start);
+    // 計算下一輪開始時間
+    start += OSTCBCur->period;
+    // 重製執行時間
+    OSTCBCur->compTime = compTime_;
+    OS_EXIT_CRITICAL();
+    // 檢查此task是否超時
+    if (toDelay < 0)
+    { // 超時
+      OS_ENTER_CRITICAL();
+      printf("time:%d task%d exceed deadline\n", deadline, taskId_);
+      OS_EXIT_CRITICAL();
     }
+    else
+    { // 未超時
+      if (printList)
+      {
+        OS_ENTER_CRITICAL();
+        PrintMsgList();
+        OS_EXIT_CRITICAL();
+      }
+      OSTimeDly(toDelay);
+    }
+    // 將deadline增加至下一周期
+    deadline += period_;
+  }
 }
-
+// Task1 (STARTUP TASK)
 void Task1(void *pdata)
 {
-    int start, end, toDelay, deadline;
-    int C = 1;
-    int P = 3;
-
-    OSTCBCur->compTime = C;
-    OSTCBCur->period = P;
-
-    deadline = P;
-
-    start = OSTimeGet();
-
-    while (1)
-    {
-        while (1)
-        {
-            OS_ENTER_CRITICAL();
-            if (OSTCBCur->compTime == 0)
-            {
-                OS_EXIT_CRITICAL();
-                break;
-            }
-            OS_EXIT_CRITICAL();
-        }
-
-        end = OSTimeGet();
-        toDelay = P - (end - start);
-
-        start += P;
-        OSTCBCur->compTime = C;
-
-        printf("task1 hello\n");
-
-        if (toDelay < 0)
-        {
-            OS_ENTER_CRITICAL();
-            printf("%d\tTask 1 Deadline!\n", deadline);
-            OS_EXIT_CRITICAL();
-        }
-        else
-        {
-            OS_ENTER_CRITICAL();
-            printMsgBuf();
-            OS_EXIT_CRITICAL();
-
-            OSTimeDly(toDelay);
-        }
-
-        deadline += P;
-        // OSTimeDly(toDelay);
-    }
+  (void)pdata;
+  Task(1, 1, 3, TRUE);
 }
 
+// Task2
 void Task2(void *pdata)
 {
-    int start, end, toDelay, deadline;
-    int C = 3;
-    int P = 6;
-
-    OSTCBCur->compTime = C;
-    OSTCBCur->period = P;
-
-    deadline = P;
-
-    start = OSTimeGet();
-
-    while (1)
-    {
-        while (1)
-        {
-            OS_ENTER_CRITICAL();
-            if (OSTCBCur->compTime == 0)
-            {
-                OS_EXIT_CRITICAL();
-                break;
-            }
-            OS_EXIT_CRITICAL();
-        }
-
-        end = OSTimeGet();
-        toDelay = P - (end - start);
-
-        start += P;
-        OSTCBCur->compTime = C;
-
-        if (toDelay < 0)
-        {
-            OS_ENTER_CRITICAL();
-            printf("%d\tTask 2 Deadline!\n", deadline);
-            OS_EXIT_CRITICAL();
-        }
-
-        deadline += P;
-        // OSTimeDly(toDelay);
-    }
+  (void)pdata;
+  Task(2, 3, 6, FALSE);
 }
 
+// Task3
 void Task3(void *pdata)
 {
-    int start, end, toDelay, deadline;
-    int C = 4;
-    int P = 9;
-
-    OSTCBCur->compTime = C;
-    OSTCBCur->period = P;
-
-    deadline = P;
-
-    start = OSTimeGet();
-
-    while (1)
-    {
-        while (1)
-        {
-            OS_ENTER_CRITICAL();
-            if (OSTCBCur->compTime == 0)
-            {
-                OS_EXIT_CRITICAL();
-                break;
-            }
-            OS_EXIT_CRITICAL();
-        }
-
-        end = OSTimeGet();
-        toDelay = P - (end - start);
-
-        start += P;
-        OSTCBCur->compTime = C;
-
-        if (toDelay < 0)
-        {
-            OS_ENTER_CRITICAL();
-            printf("%d\tTask 3 Deadline!\n", deadline);
-            OS_EXIT_CRITICAL();
-        }
-
-        deadline += P;
-        // OSTimeDly(toDelay);
-    }
+  (void)pdata;
+  Task(3, 4, 9, FALSE);
 }
 
-void printMsgBuf()
+void PrintMsgList()
 {
+  while (msgList->next)
+  {
+    // 印出訊息佇列節點訊息
     printf("%d\t%s\t%d\t%d\n",
-           messageBuf[msgBufTailIdx - 1].currTime,
-           (messageBuf[msgBufTailIdx - 1].event ? "Preemt  " : "Complete"),
-           messageBuf[msgBufTailIdx - 1].fromTaskId,
-           messageBuf[msgBufTailIdx - 1].toTaskId);
+           msgList->next->currTime,
+           (msgList->next->event ? "Complete" : "Preemt  "),
+           msgList->next->fromTaskId,
+           msgList->next->toTaskId);
+    // 將印過的節點刪掉
+    msgTemp = msgList;
+    msgList = msgList->next;
+    free(msgTemp);
+  }
+}
 
-    OSTimeDly(1);
+void InitMsgList()
+{
+  // 新增dummy節點(簡化串列操作)
+  msgList = (MSG *)malloc(sizeof(MSG));
+  msgList->next = (MSG *)0;
 }

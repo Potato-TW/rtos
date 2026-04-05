@@ -78,9 +78,6 @@
 #define OS_EVENT_TYPE_MUTEX 4
 #define OS_EVENT_TYPE_FLAG 5
 
-#define PREEMPT_IDX 0
-#define COMPLETE_IDX 1
-
 /*
 *********************************************************************************************************
 *                                         EVENT FLAGS
@@ -377,9 +374,6 @@ typedef struct os_tcb
 {
     OS_STK *OSTCBStkPtr; /* Pointer to current top of stack                              */
 
-    int period;
-    int compTime;
-
 #if OS_TASK_CREATE_EXT_EN > 0
     void *OSTCBExtPtr;      /* Pointer to user definable data for TCB extension             */
     OS_STK *OSTCBStkBottom; /* Pointer to bottom of stack                                   */
@@ -418,6 +412,8 @@ typedef struct os_tcb
 #if OS_TASK_DEL_EN > 0
     BOOLEAN OSTCBDelReq; /* Indicates whether a task needs to delete itself              */
 #endif
+    int period;      // task週期     // henry modified
+    int computeTime; // task執行時間 // henry modefied
 } OS_TCB;
 
 /*$PAGE*/
@@ -426,21 +422,19 @@ typedef struct os_tcb
 *                                            GLOBAL VARIABLES
 *********************************************************************************************************
 */
-static int msgIndex = 0;
-#define MSG_TBL_SIZE 1000
-typedef struct message
+
+/* self-defined variables */
+typedef struct _msg
 {
-    int currTime;
-    int event;
-    int fromTaskId;
-    int toTaskId;
+    int tick;       // 當前時間(tick)
+    int event;      // 事件(0=preemt, 1=complete)
+    int fromTaskId; // 事件發生前 task ID
+    int toTaskId;   // 事件發生後 task ID
+    struct _msg *next;
+} msg;
 
-    struct message *next;
-} MSG;
-
-// OS_EXT MSG msgList[MSG_TBL_SIZE];
-OS_EXT MSG *msgList;
-OS_EXT MSG *msgTemp;
+OS_EXT msg *msgList; // 訊息佇列 (linked list)
+OS_EXT msg *msgTemp; // 訊息佇列暫存變數
 
 OS_EXT INT32U OSCtxSwCtr; /* Counter of number of context switches           */
 
