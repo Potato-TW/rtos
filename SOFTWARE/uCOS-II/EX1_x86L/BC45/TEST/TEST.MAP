@@ -2,11 +2,11 @@
  Start  Stop   Length Name               Class
 
  00000H 02519H 0251AH _TEXT              CODE
- 0251AH 027A3H 0028AH TEST_TEXT          CODE
- 027A4H 02879H 000D6H OS_CPU_A_TEXT      CODE
- 0287AH 02A4FH 001D6H OS_CPU_C_TEXT      CODE
- 02A50H 02DCCH 0037DH PC_TEXT            CODE
- 02DCDH 065F5H 03829H UCOS_II_TEXT       CODE
+ 0251AH 027A6H 0028DH TEST_TEXT          CODE
+ 027A8H 0287DH 000D6H OS_CPU_A_TEXT      CODE
+ 0287EH 02A53H 001D6H OS_CPU_C_TEXT      CODE
+ 02A54H 02DD0H 0037DH PC_TEXT            CODE
+ 02DD1H 065F9H 03829H UCOS_II_TEXT       CODE
  06600H 06600H 00000H _FARDATA           FAR_DATA
  06600H 06600H 00000H _FARBSS            FAR_BSS
  06600H 06600H 00000H _OVERLAY_          OVRINFO
@@ -74,11 +74,11 @@ Detailed map of segments
  0000:2355 0151 C=CODE   S=_TEXT          G=(none)  M=WRITE      ACBP=28
  0000:24A6 003C C=CODE   S=_TEXT          G=(none)  M=WRITEA     ACBP=28
  0000:24E2 0038 C=CODE   S=_TEXT          G=(none)  M=XFFLUSH    ACBP=28
- 0251:000A 028A C=CODE   S=TEST_TEXT      G=(none)  M=test.c     ACBP=28
- 027A:0004 00D6 C=CODE   S=OS_CPU_A_TEXT  G=(none)  M=\SOFTWARE\uCOS-II\Ix86L\BC45\OS_CPU_A.ASM ACBP=48
- 0287:000A 01D6 C=CODE   S=OS_CPU_C_TEXT  G=(none)  M=os_cpu_c.c ACBP=28
- 02A5:0000 037D C=CODE   S=PC_TEXT        G=(none)  M=pc.c       ACBP=28
- 02DC:000D 3829 C=CODE   S=UCOS_II_TEXT   G=(none)  M=ucos_ii.c  ACBP=28
+ 0251:000A 028D C=CODE   S=TEST_TEXT      G=(none)  M=test.c     ACBP=28
+ 027A:0008 00D6 C=CODE   S=OS_CPU_A_TEXT  G=(none)  M=\SOFTWARE\uCOS-II\Ix86L\BC45\OS_CPU_A.ASM ACBP=48
+ 0287:000E 01D6 C=CODE   S=OS_CPU_C_TEXT  G=(none)  M=os_cpu_c.c ACBP=28
+ 02A5:0004 037D C=CODE   S=PC_TEXT        G=(none)  M=pc.c       ACBP=28
+ 02DD:0001 3829 C=CODE   S=UCOS_II_TEXT   G=(none)  M=ucos_ii.c  ACBP=28
  0660:0000 0000 C=FAR_DATA S=_FARDATA       G=(none)  M=c0.ASM     ACBP=68
  0660:0000 0000 C=FAR_BSS S=_FARBSS        G=(none)  M=c0.ASM     ACBP=68
  0660:0000 0000 C=OVRINFO S=_OVERLAY_      G=(none)  M=c0.ASM     ACBP=68
@@ -224,7 +224,7 @@ Detailed map of segments
  0000:036C       _getdate
  0000:1540       _gettext
  0000:037F       _gettime
- 0251:0272 idle  _InitMsgList
+ 0251:0275 idle  _InitMsgList
  0000:052D       _isatty
  0000:15EC       _kbhit
  0000:1A5D       _longjmp
@@ -236,147 +236,147 @@ Detailed map of segments
  0660:3D36       _msgList
  0660:3D32       _msgTemp
  0660:3CEE idle  _OSCPUUsage
- 027A:0022       _OSCtxSw
+ 027A:0026       _OSCtxSw
  0660:3D2E       _OSCtxSwCtr
  0660:3D2A idle  _OSEventFreeList
  0660:3D16 idle  _OSEventTbl
- 02DC:0979 idle  _OSFlagAccept
- 02DC:0AAB idle  _OSFlagCreate
- 02DC:0B23 idle  _OSFlagDel
+ 02DD:096D idle  _OSFlagAccept
+ 02DD:0A9F idle  _OSFlagCreate
+ 02DD:0B17 idle  _OSFlagDel
  0660:3CEF idle  _OSFlagFreeList
- 02DC:0C65 idle  _OSFlagPend
- 02DC:0EBF idle  _OSFlagPost
- 02DC:105F idle  _OSFlagQuery
+ 02DD:0C59 idle  _OSFlagPend
+ 02DD:0EB3 idle  _OSFlagPost
+ 02DD:1053 idle  _OSFlagQuery
  0660:3CF3 idle  _OSFlagTbl
  0660:38D7 idle  _OSIdleCtr
  0660:3CEA idle  _OSIdleCtrMax
  0660:3CE6 idle  _OSIdleCtrRun
- 02DC:000D       _OSInit
- 0287:000A       _OSInitHookBegin
- 0287:000B       _OSInitHookEnd
- 027A:005D       _OSIntCtxSw
- 02DC:0045 idle  _OSIntEnter
- 02DC:0058       _OSIntExit
+ 02DD:0001       _OSInit
+ 0287:000E       _OSInitHookBegin
+ 0287:000F       _OSInitHookEnd
+ 027A:0061       _OSIntCtxSw
+ 02DD:0039 idle  _OSIntEnter
+ 02DD:004C       _OSIntExit
  0660:38E3 idle  _OSIntExitY
  0660:38E4       _OSIntNesting
  0660:38E2 idle  _OSLockNesting
  0660:00FC idle  _OSMapTbl
- 02DC:12EF idle  _OSMboxAccept
- 02DC:133A idle  _OSMboxCreate
- 02DC:13AF idle  _OSMboxDel
- 02DC:14CD idle  _OSMboxPend
- 02DC:15CF idle  _OSMboxPost
- 02DC:1647 idle  _OSMboxPostOpt
- 02DC:16EA idle  _OSMboxQuery
- 02DC:1778 idle  _OSMemCreate
+ 02DD:12E3 idle  _OSMboxAccept
+ 02DD:132E idle  _OSMboxCreate
+ 02DD:13A3 idle  _OSMboxDel
+ 02DD:14C1 idle  _OSMboxPend
+ 02DD:15C3 idle  _OSMboxPost
+ 02DD:163B idle  _OSMboxPostOpt
+ 02DD:16DE idle  _OSMboxQuery
+ 02DD:176C idle  _OSMemCreate
  0660:31C4 idle  _OSMemFreeList
- 02DC:18C3 idle  _OSMemGet
- 02DC:1941 idle  _OSMemPut
- 02DC:19B1 idle  _OSMemQuery
+ 02DD:18B7 idle  _OSMemGet
+ 02DD:1935 idle  _OSMemPut
+ 02DD:19A5 idle  _OSMemQuery
  0660:3160 idle  _OSMemTbl
- 02DC:1AFE idle  _OSMutexAccept
- 02DC:1B89 idle  _OSMutexCreate
- 02DC:1C6F idle  _OSMutexDel
- 02DC:1DC9 idle  _OSMutexPend
- 02DC:1FB4 idle  _OSMutexPost
- 02DC:213C idle  _OSMutexQuery
+ 02DD:1AF2 idle  _OSMutexAccept
+ 02DD:1B7D idle  _OSMutexCreate
+ 02DD:1C63 idle  _OSMutexDel
+ 02DD:1DBD idle  _OSMutexPend
+ 02DD:1FA8 idle  _OSMutexPost
+ 02DD:2130 idle  _OSMutexQuery
  0660:38E1       _OSPrioCur
  0660:38E0       _OSPrioHighRdy
- 02DC:21F1 idle  _OSQAccept
- 02DC:2291 idle  _OSQCreate
- 02DC:23B4 idle  _OSQDel
- 02DC:2531 idle  _OSQFlush
+ 02DD:21E5 idle  _OSQAccept
+ 02DD:2285 idle  _OSQCreate
+ 02DD:23A8 idle  _OSQDel
+ 02DD:2525 idle  _OSQFlush
  0660:315C idle  _OSQFreeList
- 02DC:2589 idle  _OSQPend
- 02DC:26CF idle  _OSQPost
- 02DC:2797 idle  _OSQPostFront
- 02DC:2859 idle  _OSQPostOpt
- 02DC:2997 idle  _OSQQuery
+ 02DD:257D idle  _OSQPend
+ 02DD:26C3 idle  _OSQPost
+ 02DD:278B idle  _OSQPostFront
+ 02DD:284D idle  _OSQPostOpt
+ 02DD:298B idle  _OSQQuery
  0660:312C idle  _OSQTbl
  0660:38DF idle  _OSRdyGrp
  0660:38DD idle  _OSRdyTbl
  0660:38DC       _OSRunning
- 02DC:00F9 idle  _OSSchedLock
- 02DC:010F idle  _OSSchedUnlock
- 02DC:2ABC idle  _OSSemAccept
- 02DC:2AEE       _OSSemCreate
- 02DC:2B62 idle  _OSSemDel
- 02DC:2C80 idle  _OSSemPend
- 02DC:2D30 idle  _OSSemPost
- 02DC:2D8A idle  _OSSemQuery
- 02DC:013C       _OSStart
- 027A:0004       _OSStartHighRdy
- 02DC:019B idle  _OSStatInit
+ 02DD:00ED idle  _OSSchedLock
+ 02DD:0103 idle  _OSSchedUnlock
+ 02DD:2AB0 idle  _OSSemAccept
+ 02DD:2AE2       _OSSemCreate
+ 02DD:2B56 idle  _OSSemDel
+ 02DD:2C74 idle  _OSSemPend
+ 02DD:2D24 idle  _OSSemPost
+ 02DD:2D7E idle  _OSSemQuery
+ 02DD:0130       _OSStart
+ 027A:0008       _OSStartHighRdy
+ 02DD:018F idle  _OSStatInit
  0660:3CE5 idle  _OSStatRdy
- 02DC:2E10 idle  _OSTaskChangePrio
- 02DC:2FDC       _OSTaskCreate
- 02DC:3099 idle  _OSTaskCreateExt
- 0287:000C       _OSTaskCreateHook
+ 02DD:2E04 idle  _OSTaskChangePrio
+ 02DD:2FD0       _OSTaskCreate
+ 02DD:308D idle  _OSTaskCreateExt
+ 0287:0010       _OSTaskCreateHook
  0660:38DB idle  _OSTaskCtr
- 02DC:3189 idle  _OSTaskDel
- 0287:0011       _OSTaskDelHook
- 02DC:3368 idle  _OSTaskDelReq
- 0287:0016       _OSTaskIdleHook
+ 02DD:317D idle  _OSTaskDel
+ 0287:0015       _OSTaskDelHook
+ 02DD:335C idle  _OSTaskDelReq
+ 0287:001A       _OSTaskIdleHook
  0660:34D7 idle  _OSTaskIdleStk
- 02DC:35E6 idle  _OSTaskQuery
- 02DC:33D4 idle  _OSTaskResume
- 0287:0017       _OSTaskStatHook
+ 02DD:35DA idle  _OSTaskQuery
+ 02DD:33C8 idle  _OSTaskResume
+ 0287:001B       _OSTaskStatHook
  0660:38E5 idle  _OSTaskStatStk
- 02DC:3453 idle  _OSTaskStkChk
- 0287:0018       _OSTaskStkInit
- 0287:00FE idle  _OSTaskStkInit_FPE_x86
- 02DC:3538 idle  _OSTaskSuspend
- 0287:01D9       _OSTaskSwHook
+ 02DD:3447 idle  _OSTaskStkChk
+ 0287:001C       _OSTaskStkInit
+ 0287:0102 idle  _OSTaskStkInit_FPE_x86
+ 02DD:352C idle  _OSTaskSuspend
+ 0287:01DD       _OSTaskSwHook
  0660:34D3       _OSTCBCur
  0660:34CF idle  _OSTCBFreeList
  0660:34CB       _OSTCBHighRdy
- 0287:01DA       _OSTCBInitHook
+ 0287:01DE       _OSTCBInitHook
  0660:34C7 idle  _OSTCBList
  0660:3493 idle  _OSTCBPrioTbl
  0660:31C8 idle  _OSTCBTbl
  0660:310A       _OSTickDOSCtr
- 027A:008A       _OSTickISR
+ 027A:008E       _OSTickISR
  0660:3128 idle  _OSTime
- 02DC:3654       _OSTimeDly
- 02DC:369B       _OSTimeDlyHMSM
- 02DC:378A idle  _OSTimeDlyResume
- 02DC:3802       _OSTimeGet
- 02DC:3821       _OSTimeSet
- 02DC:01D6       _OSTimeTick
- 0287:01DF       _OSTimeTickHook
+ 02DD:3648       _OSTimeDly
+ 02DD:368F       _OSTimeDlyHMSM
+ 02DD:377E idle  _OSTimeDlyResume
+ 02DD:37F6       _OSTimeGet
+ 02DD:3815       _OSTimeSet
+ 02DD:01CA       _OSTimeTick
+ 0287:01E3       _OSTimeTickHook
  0660:0104 idle  _OSUnMapTbl
- 02DC:026C idle  _OSVersion
- 02DC:0270 idle  _OS_Dummy
- 02DC:0271 idle  _OS_EventTaskRdy
- 02DC:033B idle  _OS_EventTaskWait
- 02DC:03A8 idle  _OS_EventTO
- 02DC:03FC idle  _OS_EventWaitListInit
- 02DC:1181 idle  _OS_FlagInit
- 02DC:1240 idle  _OS_FlagUnlink
- 02DC:1A5A idle  _OS_MemInit
- 02DC:2A6C idle  _OS_QInit
- 02DC:05F6 idle  _OS_Sched
- 02DC:067E idle  _OS_TaskIdle
- 02DC:06A3 idle  _OS_TaskStat
- 02DC:076F idle  _OS_TCBInit
- 02A5:0000 idle  _PC_DispChar
- 02A5:003E idle  _PC_DispClrCol
- 02A5:0084 idle  _PC_DispClrRow
- 02A5:00BD idle  _PC_DispClrScr
- 02A5:00EE idle  _PC_DispStr
- 02A5:013D       _PC_DOSReturn
- 02A5:0151       _PC_DOSSaveReturn
- 02A5:01BF idle  _PC_ElapsedInit
- 02A5:01D3 idle  _PC_ElapsedStart
- 02A5:01F9 idle  _PC_ElapsedStop
- 02A5:024A idle  _PC_GetDateTime
- 02A5:029D       _PC_GetKey
- 02A5:02C4       _PC_SetTickRate
+ 02DD:0260 idle  _OSVersion
+ 02DD:0264 idle  _OS_Dummy
+ 02DD:0265 idle  _OS_EventTaskRdy
+ 02DD:032F idle  _OS_EventTaskWait
+ 02DD:039C idle  _OS_EventTO
+ 02DD:03F0 idle  _OS_EventWaitListInit
+ 02DD:1175 idle  _OS_FlagInit
+ 02DD:1234 idle  _OS_FlagUnlink
+ 02DD:1A4E idle  _OS_MemInit
+ 02DD:2A60 idle  _OS_QInit
+ 02DD:05EA idle  _OS_Sched
+ 02DD:0672 idle  _OS_TaskIdle
+ 02DD:0697 idle  _OS_TaskStat
+ 02DD:0763 idle  _OS_TCBInit
+ 02A5:0004 idle  _PC_DispChar
+ 02A5:0042 idle  _PC_DispClrCol
+ 02A5:0088 idle  _PC_DispClrRow
+ 02A5:00C1 idle  _PC_DispClrScr
+ 02A5:00F2 idle  _PC_DispStr
+ 02A5:0141       _PC_DOSReturn
+ 02A5:0155       _PC_DOSSaveReturn
+ 02A5:01C3 idle  _PC_ElapsedInit
+ 02A5:01D7 idle  _PC_ElapsedStart
+ 02A5:01FD idle  _PC_ElapsedStop
+ 02A5:024E idle  _PC_GetDateTime
+ 02A5:02A1       _PC_GetKey
+ 02A5:02C8       _PC_SetTickRate
  0660:310C idle  _PC_TickISR
- 02A5:0311 idle  _PC_VectGet
- 02A5:0348       _PC_VectSet
+ 02A5:0315 idle  _PC_VectGet
+ 02A5:034C       _PC_VectSet
  0000:1DD2       _printf
- 0251:01F4 idle  _PrintMsgList
+ 0251:01F7 idle  _PrintMsgList
  0000:169B       _putch
  0000:1596       _puttext
  0660:04FC idle  _RandomSem
@@ -386,9 +386,9 @@ Detailed map of segments
  0000:21B5       _setvbuf
  0000:2312       _sprintf
  0251:011F idle  _Task
- 0251:01B8 idle  _Task1
- 0251:01CC idle  _Task2
- 0251:01E0 idle  _Task3
+ 0251:01BB idle  _Task1
+ 0251:01CF idle  _Task2
+ 0251:01E3 idle  _Task3
  0660:0500 idle  _TaskData
  0251:0059 idle  _TaskStart
  0660:050A idle  _TaskStartStk
@@ -588,115 +588,115 @@ Detailed map of segments
  0251:000A       _main
  0251:0059 idle  _TaskStart
  0251:011F idle  _Task
- 0251:01B8 idle  _Task1
- 0251:01CC idle  _Task2
- 0251:01E0 idle  _Task3
- 0251:01F4 idle  _PrintMsgList
- 0251:0272 idle  _InitMsgList
- 027A:0004       _OSStartHighRdy
- 027A:0022       _OSCtxSw
- 027A:005D       _OSIntCtxSw
- 027A:008A       _OSTickISR
- 0287:000A       _OSInitHookBegin
- 0287:000B       _OSInitHookEnd
- 0287:000C       _OSTaskCreateHook
- 0287:0011       _OSTaskDelHook
- 0287:0016       _OSTaskIdleHook
- 0287:0017       _OSTaskStatHook
- 0287:0018       _OSTaskStkInit
- 0287:00FE idle  _OSTaskStkInit_FPE_x86
- 0287:01D9       _OSTaskSwHook
- 0287:01DA       _OSTCBInitHook
- 0287:01DF       _OSTimeTickHook
- 02A5:0000 idle  _PC_DispChar
- 02A5:003E idle  _PC_DispClrCol
- 02A5:0084 idle  _PC_DispClrRow
- 02A5:00BD idle  _PC_DispClrScr
- 02A5:00EE idle  _PC_DispStr
- 02A5:013D       _PC_DOSReturn
- 02A5:0151       _PC_DOSSaveReturn
- 02A5:01BF idle  _PC_ElapsedInit
- 02A5:01D3 idle  _PC_ElapsedStart
- 02A5:01F9 idle  _PC_ElapsedStop
- 02A5:024A idle  _PC_GetDateTime
- 02A5:029D       _PC_GetKey
- 02A5:02C4       _PC_SetTickRate
- 02A5:0311 idle  _PC_VectGet
- 02A5:0348       _PC_VectSet
- 02DC:000D       _OSInit
- 02DC:0045 idle  _OSIntEnter
- 02DC:0058       _OSIntExit
- 02DC:00F9 idle  _OSSchedLock
- 02DC:010F idle  _OSSchedUnlock
- 02DC:013C       _OSStart
- 02DC:019B idle  _OSStatInit
- 02DC:01D6       _OSTimeTick
- 02DC:026C idle  _OSVersion
- 02DC:0270 idle  _OS_Dummy
- 02DC:0271 idle  _OS_EventTaskRdy
- 02DC:033B idle  _OS_EventTaskWait
- 02DC:03A8 idle  _OS_EventTO
- 02DC:03FC idle  _OS_EventWaitListInit
- 02DC:05F6 idle  _OS_Sched
- 02DC:067E idle  _OS_TaskIdle
- 02DC:06A3 idle  _OS_TaskStat
- 02DC:076F idle  _OS_TCBInit
- 02DC:0979 idle  _OSFlagAccept
- 02DC:0AAB idle  _OSFlagCreate
- 02DC:0B23 idle  _OSFlagDel
- 02DC:0C65 idle  _OSFlagPend
- 02DC:0EBF idle  _OSFlagPost
- 02DC:105F idle  _OSFlagQuery
- 02DC:1181 idle  _OS_FlagInit
- 02DC:1240 idle  _OS_FlagUnlink
- 02DC:12EF idle  _OSMboxAccept
- 02DC:133A idle  _OSMboxCreate
- 02DC:13AF idle  _OSMboxDel
- 02DC:14CD idle  _OSMboxPend
- 02DC:15CF idle  _OSMboxPost
- 02DC:1647 idle  _OSMboxPostOpt
- 02DC:16EA idle  _OSMboxQuery
- 02DC:1778 idle  _OSMemCreate
- 02DC:18C3 idle  _OSMemGet
- 02DC:1941 idle  _OSMemPut
- 02DC:19B1 idle  _OSMemQuery
- 02DC:1A5A idle  _OS_MemInit
- 02DC:1AFE idle  _OSMutexAccept
- 02DC:1B89 idle  _OSMutexCreate
- 02DC:1C6F idle  _OSMutexDel
- 02DC:1DC9 idle  _OSMutexPend
- 02DC:1FB4 idle  _OSMutexPost
- 02DC:213C idle  _OSMutexQuery
- 02DC:21F1 idle  _OSQAccept
- 02DC:2291 idle  _OSQCreate
- 02DC:23B4 idle  _OSQDel
- 02DC:2531 idle  _OSQFlush
- 02DC:2589 idle  _OSQPend
- 02DC:26CF idle  _OSQPost
- 02DC:2797 idle  _OSQPostFront
- 02DC:2859 idle  _OSQPostOpt
- 02DC:2997 idle  _OSQQuery
- 02DC:2A6C idle  _OS_QInit
- 02DC:2ABC idle  _OSSemAccept
- 02DC:2AEE       _OSSemCreate
- 02DC:2B62 idle  _OSSemDel
- 02DC:2C80 idle  _OSSemPend
- 02DC:2D30 idle  _OSSemPost
- 02DC:2D8A idle  _OSSemQuery
- 02DC:2E10 idle  _OSTaskChangePrio
- 02DC:2FDC       _OSTaskCreate
- 02DC:3099 idle  _OSTaskCreateExt
- 02DC:3189 idle  _OSTaskDel
- 02DC:3368 idle  _OSTaskDelReq
- 02DC:33D4 idle  _OSTaskResume
- 02DC:3453 idle  _OSTaskStkChk
- 02DC:3538 idle  _OSTaskSuspend
- 02DC:35E6 idle  _OSTaskQuery
- 02DC:3654       _OSTimeDly
- 02DC:369B       _OSTimeDlyHMSM
- 02DC:378A idle  _OSTimeDlyResume
- 02DC:3802       _OSTimeGet
- 02DC:3821       _OSTimeSet
+ 0251:01BB idle  _Task1
+ 0251:01CF idle  _Task2
+ 0251:01E3 idle  _Task3
+ 0251:01F7 idle  _PrintMsgList
+ 0251:0275 idle  _InitMsgList
+ 027A:0008       _OSStartHighRdy
+ 027A:0026       _OSCtxSw
+ 027A:0061       _OSIntCtxSw
+ 027A:008E       _OSTickISR
+ 0287:000E       _OSInitHookBegin
+ 0287:000F       _OSInitHookEnd
+ 0287:0010       _OSTaskCreateHook
+ 0287:0015       _OSTaskDelHook
+ 0287:001A       _OSTaskIdleHook
+ 0287:001B       _OSTaskStatHook
+ 0287:001C       _OSTaskStkInit
+ 0287:0102 idle  _OSTaskStkInit_FPE_x86
+ 0287:01DD       _OSTaskSwHook
+ 0287:01DE       _OSTCBInitHook
+ 0287:01E3       _OSTimeTickHook
+ 02A5:0004 idle  _PC_DispChar
+ 02A5:0042 idle  _PC_DispClrCol
+ 02A5:0088 idle  _PC_DispClrRow
+ 02A5:00C1 idle  _PC_DispClrScr
+ 02A5:00F2 idle  _PC_DispStr
+ 02A5:0141       _PC_DOSReturn
+ 02A5:0155       _PC_DOSSaveReturn
+ 02A5:01C3 idle  _PC_ElapsedInit
+ 02A5:01D7 idle  _PC_ElapsedStart
+ 02A5:01FD idle  _PC_ElapsedStop
+ 02A5:024E idle  _PC_GetDateTime
+ 02A5:02A1       _PC_GetKey
+ 02A5:02C8       _PC_SetTickRate
+ 02A5:0315 idle  _PC_VectGet
+ 02A5:034C       _PC_VectSet
+ 02DD:0001       _OSInit
+ 02DD:0039 idle  _OSIntEnter
+ 02DD:004C       _OSIntExit
+ 02DD:00ED idle  _OSSchedLock
+ 02DD:0103 idle  _OSSchedUnlock
+ 02DD:0130       _OSStart
+ 02DD:018F idle  _OSStatInit
+ 02DD:01CA       _OSTimeTick
+ 02DD:0260 idle  _OSVersion
+ 02DD:0264 idle  _OS_Dummy
+ 02DD:0265 idle  _OS_EventTaskRdy
+ 02DD:032F idle  _OS_EventTaskWait
+ 02DD:039C idle  _OS_EventTO
+ 02DD:03F0 idle  _OS_EventWaitListInit
+ 02DD:05EA idle  _OS_Sched
+ 02DD:0672 idle  _OS_TaskIdle
+ 02DD:0697 idle  _OS_TaskStat
+ 02DD:0763 idle  _OS_TCBInit
+ 02DD:096D idle  _OSFlagAccept
+ 02DD:0A9F idle  _OSFlagCreate
+ 02DD:0B17 idle  _OSFlagDel
+ 02DD:0C59 idle  _OSFlagPend
+ 02DD:0EB3 idle  _OSFlagPost
+ 02DD:1053 idle  _OSFlagQuery
+ 02DD:1175 idle  _OS_FlagInit
+ 02DD:1234 idle  _OS_FlagUnlink
+ 02DD:12E3 idle  _OSMboxAccept
+ 02DD:132E idle  _OSMboxCreate
+ 02DD:13A3 idle  _OSMboxDel
+ 02DD:14C1 idle  _OSMboxPend
+ 02DD:15C3 idle  _OSMboxPost
+ 02DD:163B idle  _OSMboxPostOpt
+ 02DD:16DE idle  _OSMboxQuery
+ 02DD:176C idle  _OSMemCreate
+ 02DD:18B7 idle  _OSMemGet
+ 02DD:1935 idle  _OSMemPut
+ 02DD:19A5 idle  _OSMemQuery
+ 02DD:1A4E idle  _OS_MemInit
+ 02DD:1AF2 idle  _OSMutexAccept
+ 02DD:1B7D idle  _OSMutexCreate
+ 02DD:1C63 idle  _OSMutexDel
+ 02DD:1DBD idle  _OSMutexPend
+ 02DD:1FA8 idle  _OSMutexPost
+ 02DD:2130 idle  _OSMutexQuery
+ 02DD:21E5 idle  _OSQAccept
+ 02DD:2285 idle  _OSQCreate
+ 02DD:23A8 idle  _OSQDel
+ 02DD:2525 idle  _OSQFlush
+ 02DD:257D idle  _OSQPend
+ 02DD:26C3 idle  _OSQPost
+ 02DD:278B idle  _OSQPostFront
+ 02DD:284D idle  _OSQPostOpt
+ 02DD:298B idle  _OSQQuery
+ 02DD:2A60 idle  _OS_QInit
+ 02DD:2AB0 idle  _OSSemAccept
+ 02DD:2AE2       _OSSemCreate
+ 02DD:2B56 idle  _OSSemDel
+ 02DD:2C74 idle  _OSSemPend
+ 02DD:2D24 idle  _OSSemPost
+ 02DD:2D7E idle  _OSSemQuery
+ 02DD:2E04 idle  _OSTaskChangePrio
+ 02DD:2FD0       _OSTaskCreate
+ 02DD:308D idle  _OSTaskCreateExt
+ 02DD:317D idle  _OSTaskDel
+ 02DD:335C idle  _OSTaskDelReq
+ 02DD:33C8 idle  _OSTaskResume
+ 02DD:3447 idle  _OSTaskStkChk
+ 02DD:352C idle  _OSTaskSuspend
+ 02DD:35DA idle  _OSTaskQuery
+ 02DD:3648       _OSTimeDly
+ 02DD:368F       _OSTimeDlyHMSM
+ 02DD:377E idle  _OSTimeDlyResume
+ 02DD:37F6       _OSTimeGet
+ 02DD:3815       _OSTimeSet
  0660:0000 idle  DATASEG@
  0660:005B idle  __Int0Vector
  0660:005F idle  __Int4Vector

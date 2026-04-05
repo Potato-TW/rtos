@@ -9,9 +9,11 @@
 *                                               EXAMPLE #1
 *********************************************************************************************************
 */
-
+#include <stdio.h>
 #include "includes.h"
-
+// #define  OS_CPU_SR alt_irq_context
+// #define   // OS_ENTER_CRITICAL() \
+//         cpu_sr = alt_irq_disable_all ()
 /*
 *********************************************************************************************************
 *                                               CONSTANTS
@@ -60,22 +62,25 @@ void InitMsgList();
 
 void main(void)
 {
-  // PC_DispClrScr(DISP_FGND_WHITE + DISP_BGND_BLACK); /* Clear the screen                         */
+    // PC_DispClrScr(DISP_FGND_WHITE + DISP_BGND_BLACK); /* Clear the screen                         */
 
-  OSInit(); /* Initialize uC/OS-II                      */
+    OSInit(); /* Initialize uC/OS-II                      */
 
-  PC_DOSSaveReturn();        /* Save environment to return to DOS        */
-  PC_VectSet(uCOS, OSCtxSw); /* Install uC/OS-II's context switch vector */
+    //  PC_DOSSaveReturn();        /* Save environment to return to DOS        */
+    //  PC_VectSet(uCOS, OSCtxSw); /* Install uC/OS-II's context switch vector */
+    //
+    //  RandomSem = OSSemCreate(1); /* Random number semaphore                  */
 
-  RandomSem = OSSemCreate(1); /* Random number semaphore                  */
+    // TaskStart((void *)0);
 
-  // TaskStart((void *)0);
+    //   OSTaskCreate(TaskStart, (void *)0, &TaskStartStk[TASK_STK_SIZE - 1], 0);
+    OSTaskCreate(Task1, 0, &TaskStk[0][TASK_STK_SIZE - 1], 1);
+    OSTaskCreate(Task2, 0, &TaskStk[1][TASK_STK_SIZE - 1], 2);
+    //   OSTaskCreate(Task3, 0, &TaskStk[2][TASK_STK_SIZE - 1], 3);
 
-  OSTaskCreate(TaskStart, (void *)0, &TaskStartStk[TASK_STK_SIZE - 1], 0);
+    InitMsgList();
 
-  InitMsgList();
-
-  OSStart(); /* Start multitasking                       */
+    OSStart(); /* Start multitasking                       */
 }
 
 /*
@@ -85,42 +90,42 @@ void main(void)
 */
 void TaskStart(void *pdata)
 {
-#if OS_CRITICAL_METHOD == 3 /* Allocate storage for CPU status register */
-  OS_CPU_SR cpu_sr;
-#endif
-  char s[100];
-  INT16S key;
+    // #if OS_CRITICAL_METHOD == 3 /* Allocate storage for CPU status register */
+    //   OS_CPU_SR cpu_sr;
+    // #endif
+    //   char s[100];
+    //   INT16S key;
 
-  pdata = pdata; /* Prevent compiler warning                 */
+    //  pdata = pdata; /* Prevent compiler warning                 */
 
-  // TaskStartDispInit(); /* Initialize the display                   */
+    // TaskStartDispInit(); /* Initialize the display                   */
 
-  OS_ENTER_CRITICAL();
-  PC_VectSet(0x08, OSTickISR);      /* Install uC/OS-II's clock tick ISR        */
-  PC_SetTickRate(OS_TICKS_PER_SEC); /* Reprogram tick rate                      */
-  OS_EXIT_CRITICAL();
+    //  // OS_ENTER_CRITICAL();
+    //  PC_VectSet(0x08, OSTickISR);      /* Install uC/OS-II's clock tick ISR        */
+    //  PC_SetTickRate(OS_TICKS_PER_SEC); /* Reprogram tick rate                      */
+    //  // OS_EXIT_CRITICAL();
 
-  // OSStatInit(); /* Initialize uC/OS-II's statistics         */
+    // OSStatInit(); /* Initialize uC/OS-II's statistics         */
 
-  TaskStartCreateTasks(); /* Create all the application tasks         */
+    TaskStartCreateTasks(); /* Create all the application tasks         */
 
-  for (;;)
-  {
-    // TaskStartDisp(); /* Update the display                       */
+    for (;;)
+    {
+        // TaskStartDisp(); /* Update the display                       */
 
-    if (PC_GetKey(&key) == TRUE)
-    { /* See if key has been pressed              */
-      if (key == 0x1B)
-      {                 /* Yes, see if it's the ESCAPE key          */
-        PC_DOSReturn(); /* Return to DOS                            */
-      }
+        //    if (PC_GetKey(&key) == TRUE)
+        //    { /* See if key has been pressed              */
+        //      if (key == 0x1B)
+        //      {                 /* Yes, see if it's the ESCAPE key          */
+        //        PC_DOSReturn(); /* Return to DOS                            */
+        //      }
+        //    }
+
+        OSCtxSwCtr = 0; /* Clear context switch counter             */
+
+        OSTimeSet(0);
+        OSTimeDlyHMSM(0, 0, 1, 0); /* Wait five minutes                          */
     }
-
-    OSCtxSwCtr = 0; /* Clear context switch counter             */
-
-    OSTimeSet(0);
-    OSTimeDlyHMSM(0, 0, 1, 0); /* Wait five minutes                          */
-  }
 }
 
 /*$PAGE*/
@@ -217,16 +222,36 @@ void TaskStart(void *pdata)
 
 static void TaskStartCreateTasks(void)
 {
-  INT8U i;
+    INT8U i;
 
-  // for (i = 0; i < N_TASKS; i++) {                        /* Create N_TASKS identical tasks           */
-  //     TaskData[i] = '0' + i;                             /* Each task will display its own letter    */
-  //     OSTaskCreate(Task, (void *)&TaskData[i], &TaskStk[i][TASK_STK_SIZE - 1], i + 1);
-  // }
+    // for (i = 0; i < N_TASKS; i++) {                        /* Create N_TASKS identical tasks           */
+    //     TaskData[i] = '0' + i;                             /* Each task will display its own letter    */
+    //     OSTaskCreate(Task, (void *)&TaskData[i], &TaskStk[i][TASK_STK_SIZE - 1], i + 1);
+    // }
 
-  OSTaskCreate(Task1, 0, &TaskStk[0][TASK_STK_SIZE - 1], 1);
-  OSTaskCreate(Task2, 0, &TaskStk[1][TASK_STK_SIZE - 1], 2);
-  OSTaskCreate(Task3, 0, &TaskStk[2][TASK_STK_SIZE - 1], 3);
+    //   OSTaskCreate(Task1, 0, &TaskStk[0][TASK_STK_SIZE - 1], 1);
+    //   OSTaskCreate(Task2, 0, &TaskStk[1][TASK_STK_SIZE - 1], 2);
+    //   OSTaskCreate(Task3, 0, &TaskStk[2][TASK_STK_SIZE - 1], 3);
+
+    // OSTaskCreateExt(Task1,
+    //                 NULL,
+    //                 (void *)&TaskStk[0][TASK_STK_SIZE - 1],
+    //                 1,
+    //                 1,
+    //                 TaskStk[0],
+    //                 TASK_STK_SIZE,
+    //                 NULL,
+    //                 0);
+
+    // OSTaskCreateExt(Task2,
+    //                 NULL,
+    //                 (void *)&TaskStk[1][TASK_STK_SIZE - 1],
+    //                 2,
+    //                 2,
+    //                 TaskStk[1],
+    //                 TASK_STK_SIZE,
+    //                 NULL,
+    //                 0);
 }
 
 /*
@@ -255,85 +280,99 @@ static void TaskStartCreateTasks(void)
 
 void Task(int taskId_, int compTime_, int period_, int printList)
 {
-  int start, end, toDelay, deadline;
-  OS_ENTER_CRITICAL();
-  OSTCBCur->compTime = compTime_;
-  OSTCBCur->period = period_;
-  OS_EXIT_CRITICAL();
-  deadline = period_;
-
-  for (;;)
-  {
-    start = OSTimeGet();
-    
-    // OS_ENTER_CRITICAL();
-    while (OSTCBCur->compTime > 0)
-      ;
-    // OS_EXIT_CRITICAL();
-
-    OS_ENTER_CRITICAL();
-    end = OSTimeGet();
-    toDelay = OSTCBCur->period - (end - start);
-    start += OSTCBCur->period;
+    int start, end, toDelay, deadline;
+    //    OS_ENTER_CRITICAL();
     OSTCBCur->compTime = compTime_;
-    OS_EXIT_CRITICAL();
-    if (toDelay < 0)
+    OSTCBCur->period = period_;
+    //    OS_EXIT_CRITICAL();
+    deadline = period_;
+
+    for (;;)
     {
-      OS_ENTER_CRITICAL();
-      printf("time:%d task%d exceed deadline\n", deadline, taskId_);
-      OS_EXIT_CRITICAL();
+        start = OSTimeGet();
+
+        // // OS_ENTER_CRITICAL();
+        while (OSTCBCur->compTime > 0)
+            ;
+        // // OS_EXIT_CRITICAL();
+
+        // OS_ENTER_CRITICAL();
+        end = OSTimeGet();
+        toDelay = OSTCBCur->period - (end - start);
+        start += OSTCBCur->period;
+        OSTCBCur->compTime = compTime_;
+        // OS_EXIT_CRITICAL();
+        if (toDelay < 0)
+        {
+            // OS_ENTER_CRITICAL();
+            printf("time:%d task%d exceed deadline\n", deadline, taskId_);
+            // OS_EXIT_CRITICAL();
+        }
+        else
+        {
+            if (printList)
+            {
+                // OS_ENTER_CRITICAL();
+                PrintMsgList();
+                // OS_EXIT_CRITICAL();
+            }
+            OSTimeDly(toDelay);
+        }
+        deadline += period_;
     }
-    else
-    {
-      if (printList)
-      {
-        OS_ENTER_CRITICAL();
-        PrintMsgList();
-        OS_EXIT_CRITICAL();
-      }
-      OSTimeDly(toDelay);
-    }
-    deadline += period_;
-  }
 }
 // Task1 (STARTUP TASK)
 void Task1(void *pdata)
 {
-  (void)pdata;
-  Task(1, 1, 3, 1);
+    while (1)
+    {
+        printf("Hello from task1\n");
+        OSTimeDlyHMSM(0, 0, 3, 0);
+    }
+    (void)pdata;
+    Task(1, 1, 3, 1);
 }
 
 // Task2
 void Task2(void *pdata)
 {
-  (void)pdata;
-  Task(2, 3, 6, 0);
+    while (1)
+    {
+        printf("%d\t%s\t%d\t%d\n",
+               msgList->next->currTime,
+               (msgList->next->event ? "Complete" : "Preempt "),
+               msgList->next->fromTaskId,
+               msgList->next->toTaskId);
+            OSTimeDlyHMSM(0, 0, 3, 0);
+    }
+    (void)pdata;
+    Task(2, 3, 6, 0);
 }
 
 // Task3
 void Task3(void *pdata)
 {
-  (void)pdata;
-  Task(3, 4, 9, 0);
+    (void)pdata;
+    Task(3, 4, 9, 0);
 }
 
 void PrintMsgList()
 {
-  while (msgList->next)
-  {
-    printf("%d\t%s\t%d\t%d\n",
-           msgList->next->currTime,
-           (msgList->next->event ? "Complete" : "Preempt "),
-           msgList->next->fromTaskId,
-           msgList->next->toTaskId);
-    msgTemp = msgList;
-    msgList = msgList->next;
-    free(msgTemp);
-  }
+    while (msgList->next)
+    {
+        printf("%d\t%s\t%d\t%d\n",
+               msgList->next->currTime,
+               (msgList->next->event ? "Complete" : "Preempt "),
+               msgList->next->fromTaskId,
+               msgList->next->toTaskId);
+        msgTemp = msgList;
+        msgList = msgList->next;
+        free(msgTemp);
+    }
 }
 
 void InitMsgList()
 {
-  msgList = (MSG *)malloc(sizeof(MSG));
-  msgList->next = (MSG *)0;
+    msgList = (MSG *)malloc(sizeof(MSG));
+    msgList->next = (MSG *)0;
 }
