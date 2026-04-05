@@ -56,12 +56,12 @@ OS_STK TaskStartStk[TASK_STK_SIZE];
 void TaskStart(void *data); /* Function prototypes of Startup task           */
 static void TaskStartCreateTasks(void);
 
-void Task(int taskId_, int compTime_, int period_, int printList);
+void Task(int taskId_, int compTime_, int period_, int printBuf);
 void Task1(void *pdata);
 void Task2(void *pdata);
 void Task3(void *pdata);
-void PrintMsgList();
-void InitMsgList();
+void PrintMsgBuf();
+void InitMsgBuf();
 
 /*
 *********************************************************************************************************
@@ -74,7 +74,7 @@ int main(void)
   // printf("Starting uC/OS-II...\n");
   OSInit(); /* Initialize uC/OS-II                      */
 
-  InitMsgList();
+  InitMsgBuf();
   // printf("Message list initialized\n");
 
   OSTaskCreateExt(TaskStart, (void *)0, &TaskStartStk[TASK_STK_SIZE - 1], 0, 0, TaskStartStk, TASK_STK_SIZE, NULL, 0);
@@ -122,7 +122,7 @@ static void TaskStartCreateTasks(void)
 *********************************************************************************************************
 */
 
-void Task(int taskId_, int compTime_, int period_, int printList)
+void Task(int taskId_, int compTime_, int period_, int printBuf)
 {
 #if OS_CRITICAL_METHOD == 3 /* Allocate storage for CPU status register */
   OS_CPU_SR cpu_sr;
@@ -164,9 +164,9 @@ void Task(int taskId_, int compTime_, int period_, int printList)
     }
     else
     {
-      if (printList && msgList->next != NULL)
+      if(printBuf && msgBufTail > 0)
       {
-        PrintMsgList();
+        PrintMsgBuf();
       }
       OSTimeDly(toDelay);
     }
@@ -199,38 +199,39 @@ void Task3(void *pdata)
   Task(3, 4, 9, 1);
 }
 
-void PrintMsgList()
+void PrintMsgBuf()
 {
 #if OS_CRITICAL_METHOD == 3 /* Allocate storage for CPU status register */
   OS_CPU_SR cpu_sr;
 #endif
   OS_ENTER_CRITICAL();
-  // printf("PrintMsgList called\n");
+  // printf("PrintMsgBuf called\n");
   int msgCount = 0;
-  while (msgList->next)
+
+  int i = 0;
+  // printf("Current message tail size: %d\n", msgBufTail);
+  while (i < msgBufTail)
   {
     printf("%d\t%s\t%d\t%d\n",
-           msgList->next->currTime,
-           (msgList->next->event ? "Complete" : "Preempt "),
-           msgList->next->fromTaskId,
-           msgList->next->toTaskId);
-    msgTemp = msgList;
-    msgList = msgList->next;
-    free(msgTemp);
-    msgCount++;
+           msgBuf[i].currTime,
+           (msgBuf[i].event ? "Complete" : "Preempt "),
+           msgBuf[i].fromTaskId,
+           msgBuf[i].toTaskId);
+    i++;
   }
+  msgBufTail = 0;
+
   OS_EXIT_CRITICAL();
-  if (msgCount > 0)
-  {
-    printf("Printed %d messages\n", msgCount);
-  }
-  // printf("PrintMsgList finished\n");
+  // if (msgCount > 0)
+  // {
+  //   printf("Printed %d messages\n", msgCount);
+  // }
+  // printf("PrintMsgBuf finished\n");
 }
 
-void InitMsgList()
+void InitMsgBuf()
 {
-  msgList = (MSG *)malloc(sizeof(MSG));
-  msgList->next = (MSG *)0;
+  msgBufTail = 0;
 }
 
 /******************************************************************************

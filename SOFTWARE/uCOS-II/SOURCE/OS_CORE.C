@@ -1150,26 +1150,26 @@ INT8U OS_TCBInit(INT8U prio, OS_STK *ptos, OS_STK *pbos, INT16U id, INT32U stk_s
 }
 
 static void AppendMsg(int currTime_, int event_, int fromTaskId_, int toTaskId_)
-// {
-//     msgList[msgIndex].currTime = currTime_;
-//     msgList[msgIndex].event = event_;
-//     msgList[msgIndex].fromTaskId = fromTaskId_;
-//     msgList[msgIndex].toTaskId = toTaskId_;
-//     msgIndex++;
-//     if (msgIndex >= MSG_TBL_SIZE)
-//     {
-//         msgIndex = 0;
-//     }
-// }
 {
-    msgTemp = msgList;
-    while (msgTemp->next)
-        msgTemp = msgTemp->next;
-
-    msgTemp->next = (MSG *)malloc(sizeof(MSG));
-    msgTemp->next->currTime = currTime_;
-    msgTemp->next->event = event_;
-    msgTemp->next->fromTaskId = fromTaskId_;
-    msgTemp->next->toTaskId = toTaskId_;
-    msgTemp->next->next = (MSG *)0;
+    msgList[msgBufTail].currTime = currTime_;
+    msgList[msgBufTail].event = event_;
+    msgList[msgBufTail].fromTaskId = fromTaskId_;
+    msgList[msgBufTail].toTaskId = toTaskId_;
+    msgBufTail++;
+    // if (msgBufTail >= MSG_TBL_SIZE)
+    // {
+    //     msgBufTail = 0;
+    // }
 }
+// {
+//     msgTemp = msgList;
+//     while (msgTemp->next)
+//         msgTemp = msgTemp->next;
+
+//     msgTemp->next = (MSG *)malloc(sizeof(MSG));
+//     msgTemp->next->currTime = currTime_;
+//     msgTemp->next->event = event_;
+//     msgTemp->next->fromTaskId = fromTaskId_;
+//     msgTemp->next->toTaskId = toTaskId_;
+//     msgTemp->next->next = (MSG *)0;
+// }
